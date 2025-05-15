@@ -258,7 +258,8 @@
     const bgColorNothing = '#ffffff';
     const bgColorGazou = '#000000';
     const bgColorSite = '#00000a';
-    const bgColorMP3 = '#fffffb';  //2025-04-17
+    const bgColorMP3 = '#fffffb';  //2025-04-17直前の中国語、日本語に関連をつける
+    const bgColor2MP3 = '#fffffc';  //2025-05-15　独立してMP3ボタンを表示
     const bgColorPinyin = '#fffffa';
     const bgColorJapanese = '#fce5cd'; // 2025-05-08
 
@@ -276,6 +277,7 @@
       classSTOPMP3.style.display = 'none';
 
     });
+    let mp3FileTable = [];
 
     getFromGAS();//起動時のデータ取得
 
@@ -294,7 +296,7 @@
 
         // getFromGAS(1);
         sheetDatas = JSON.parse(result);
-
+        sheetIndex = 0;
         renderSheetDatas(sheetDatas);
 
         kurukuru.remove();
@@ -377,20 +379,6 @@
     }
 
 
-    // console.log(`mp3Tab:${mp3Tab}`);
-    // let i;
-    // for (i = 0; i < mp3Tab.length; i++) {
-    //   let mp3File = 'mp3Files/' + mp3Tab[i];
-    //   console.log(`mp3File:${mp3File}`);
-    //   music.src = mp3File;
-    //   music.play();
-    //   console.log("Playing audio");
-
-    // }
-      
-        
-        
-
     
     // 
     function speakJapanes(param1) {
@@ -415,6 +403,13 @@
       }
       //2023/04/27 追加　背景色
       td.style.backgroundColor = 'cyan';//2023/04/27追加　背景色　変更可能
+      // 対応するmp3ファイルがある場合は、mp3ファイルを再生する。
+      let mp3FileExist = null;
+      mp3FileExist = fncmp3Search(sheetDatas[0][sheetIndex], td.textContent);
+      if (mp3FileExist) {
+        speakMp3(mp3FileExist)
+        return;
+      }
       var uttr = new SpeechSynthesisUtterance(td.textContent);
       uttr.lang = "ja-JP"
       // 利用可能な音声を確認 2025-03-19
@@ -454,6 +449,13 @@
       }
       //2023/04/27 追加　背景色
       td.style.backgroundColor = 'cyan';//2023/04/27追加　背景色　変更可能
+      // 対応するmp3ファイルがある場合は、mp3ファイルを再生する。
+      let mp3FileExist = null;
+      mp3FileExist = fncmp3Search(sheetDatas[0][sheetIndex], td.textContent);
+      if (mp3FileExist) {
+        speakMp3(mp3FileExist)
+        return;
+      } 
       var uttr = new SpeechSynthesisUtterance(td.textContent);
       uttr.lang = "zh-CN"
       // 利用可能な音声を確認 2025-03-19
@@ -472,6 +474,17 @@
 
       // }
 
+    }
+    // mp3ファイルの存在確認
+    function fncmp3Search(sheetName, strName) {
+      let mp3FileExist = null;
+      for (let i = 0; i < mp3FileTable.length; i++) {
+        if (sheetName === mp3FileTable[i][0] && strName === mp3FileTable[i][1]) {
+          mp3FileExist = mp3FileTable[i][2];
+          break;
+        }
+      }
+      return mp3FileExist;
     }
     // 2025-03-19
     function getChineseVoice() {
@@ -562,6 +575,18 @@
                   td.textContent = strName.substring(0, 1).toUpperCase() + strName.substring(1);
                   break;
                 case bgColorMP3:
+                  [siteComment, mp3File] = cnVMp3String(strName);
+                  // let mp3FileX = mp3File;
+                  let  genbunContent = sheetDatas[i][j][k-1];
+                  [strName, strBgColor] = cnvString(genbunContent);
+                  console.log(`sheetDatas[0]:${sheetDatas[0]}`);
+                  console.log(`sheetIndex=${sheetIndex}`);
+                  console.log(`sheetNmme=${sheetDatas[0][sheetIndex]}`);
+                  let tb =[sheetDatas[0][sheetIndex], strName, mp3File];
+                  mp3FileTable.push(tb);
+                  console.log(mp3FileTable);
+                  break;
+                case bgColor2MP3:
                   [siteComment, mp3File] = cnVMp3String(strName);
                   let mp3FileX = mp3File;
                   console.log(mp3File);
