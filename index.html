@@ -581,8 +581,9 @@
                   [strName, strBgColor] = cnvString(genbunContent);
                   console.log(`sheetDatas[0]:${sheetDatas[0]}`);
                   console.log(`sheetIndex=${sheetIndex}`);
-                  console.log(`sheetNmme=${sheetDatas[0][sheetIndex]}`);
-                  let tb =[sheetDatas[0][sheetIndex], strName, mp3File];
+                  console.log(`i=${i}`);
+                  console.log(`sheetNmme=${sheetDatas[0][i-1]}`);
+                  let tb =[sheetDatas[0][i-1], strName, mp3File];
                   mp3FileTable.push(tb);
                   console.log(mp3FileTable);
                   break;
